@@ -1,0 +1,82 @@
+Flatten ← {(∾𝕊¨)⍟(1<≡)⥊𝕩}
+
+F ← {0⊑𝕩}
+R ← {1↓𝕩}
+E ← {0≠≠𝕩}
+
+I    ← {⟨"", 𝕩⟩}
+Fail ← {𝕤⋄⟨-1, ""⟩}
+Any  ← {E 𝕩 ? ⟨F 𝕩, R 𝕩⟩ ; Fail 1}
+Err  ← {⟨-1, ""⟩≡𝕩}
+
+_and_ ← {m0‿r0 ← 𝔽 𝕩 ⋄ ¬Err m0‿r0 ? m1‿r1 ← 𝔾 r0 ⋄ {¬Err m1‿r1? ⟨⟨m0, m1⟩, r1⟩ ; Fail 1} ; Fail 1}
+_or_  ← {r ← 𝔽 𝕩 ⋄ ¬Err r ? r ; 𝔾 𝕩}
+
+_mb     ← {r ← 𝔽 𝕩 ⋄ ¬Err r ? r ; I 𝕩}
+_mb_rep ← {m‿r ← 𝔽 𝕩 ⋄ ¬Err m‿r ? m0‿r0 ← 𝕊 r ⋄ ⟨m∾m0, r0⟩; I 𝕩}
+_rep    ← {m‿r ← 𝔽 𝕩 ⋄ ¬Err m‿r ? m0‿r0 ← 𝔽 _mb_rep r ⋄ ⟨m∾m0, r0⟩ ; Fail 1}
+
+_tf     ← {m‿r ← 𝕩 ⋄ ¬Err m‿r ? ⟨𝔽 m, r⟩ ; 𝕩}
+
+NotLF ← {⟨@+10⟩ NotCC 𝕩}
+End   ← {𝕩≡⟨⟩ ? I 𝕩 ; Fail 1}
+Rest  ← {End _or_ (NotLF _mb_rep) 𝕩}
+
+CC      ← {m‿r ← Any 𝕩 ⋄ (⊑m∊𝕨)∧¬Err m‿r ? m‿r ; Fail 1}
+NotCC   ← {m‿r ← Any 𝕩 ⋄ (¬⊑m∊𝕨)∧¬Err m‿r ? m‿r ; Fail 1}
+Until   ← {s ← (𝕨⍷𝕩)»0⥊˜≠𝕩 ⋄ ∨´s ? m‿r ← {𝕩⊔˜0<+`s} 𝕩 ⋄ ⟨m,r⟩; Fail 1}
+Digit   ← {('0'+↕10) CC 𝕩}
+Lower   ← {('a'+↕26) CC 𝕩}
+Upper   ← {('A'+↕26) CC 𝕩}
+Char    ← Upper _or_ Lower
+Numeric ← {•ParseFloat 𝕩} _tf {Digit _rep 𝕩}
+
+DecSep  ← {"." CC 𝕩}
+Float   ← Numeric _and_ (DecSep _and_ Numeric )_mb
+
+Space   ← {" " CC 𝕩}
+DateSep ← {"/-." CC 𝕩}
+Status  ← {"*!" CC 𝕩}
+Eq      ← {"=" CC 𝕩}
+Sign    ← {"-" CC 𝕩}
+Lf      ← {"LF"} _tf {⟨@+10⟩ CC 𝕩}
+YMD     ← {⟨⟨⟨⟨y, ·⟩, m⟩, ·⟩, d⟩ ← 𝕩 ⋄ y‿m‿d} _tf {Numeric _and_ DateSep _and_ Numeric _and_ DateSep _and_ Numeric 𝕩}
+
+NoSpace  ← {(" "∾@+10) NotCC 𝕩}
+Quote    ← {"""" CC 𝕩}
+Enclosed ← {⟨⟨·, r⟩, ·⟩←𝕩⋄r} _tf Quote _and_ ({"""" NotCC 𝕩} _rep) _and_ Quote
+TAcode   ← Enclosed _or_ (NoSpace _rep)
+
+EqYMDOpt  ← {1<≠𝕩 ? 1⊑𝕩 ; ""} _tf (Eq _and_ YMD) _mb
+StatusOpt ← {0<≠𝕩 ? ⊑𝕩 ; ""} _tf (Status _and_ Space) _mb
+TACodeOpt ← {0<≠𝕩 ? ⊑𝕩 ; ""} _tf (TACode _and_ Space) _mb
+NoComment ← {("#"∾@+10) NotCC 𝕩} _mb_rep
+Comment   ← {0<≠𝕩 ? 1⊑𝕩 ; ""} _tf ({ "#" CC 𝕩} _and_ Rest) _mb
+
+PHeader ← YMD _and_ EqYMDOpt _and_ Space _and_ StatusOpt _and_ TACodeOpt _and_ NoComment _and_ Comment
+Header  ← {⟨⟨⟨⟨⟨⟨y, y1⟩, ·⟩, s⟩, t⟩, c⟩, ·⟩ ← 𝕩 ⋄ ⟨y, y1, s, t, c⟩} _tf PHeader
+
+Num         ← Numeric
+Chars       ← Char _rep
+Spaces      ← Space _rep
+CharsSpaces ← {Flatten 𝕩} _tf Chars _and_ ((Spaces _and_ Chars) _mb_rep)
+Com         ← CharsSpaces _or_ Enclosed
+SpaceMB     ← {""} _tf Space _mb
+SignSpaceMB ← {¬""≡𝕩 ? {'-'=0⊑𝕩 ? -1 ; 1} 𝕩 ; 1} _tf (Sign _and_ SpaceMb) _mb
+
+AmountSNC ← {⟨⟨s, a⟩, ⟨·, c⟩⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ Num _and_ ((SpaceMB _and_ Com) _mb)
+AmountSCN ← {⟨⟨s, ⟨c, ·⟩⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ (Com _and_ SpaceMB) _and_ Num
+Amount    ← AmountSNC _or_ AmountSCN
+
+PostingAmount ← {⟨⟨⟨⟨·, acc⟩, ·⟩, ·⟩, am⟩ ← 𝕩⋄⟨acc, am⟩} _tf (Spaces _and_ {"  " Until 𝕩} _and_ Space _and_ Spaces _and_ Amount)
+PostingEmpty  ← {⟨·, r⟩←𝕩⋄⟨r⟩} _tf Spaces _and_ Rest
+Posting       ← PostingAmount _or_ PostingEmpty
+
+NextPosting ← {⟨·, p⟩←𝕩⋄p} _tf (Lf _and_ Posting)
+Postings    ← Posting _and_ (NextPosting _mb_rep)
+Entry       ← {⟨⟨h, ·⟩, p⟩←𝕩⋄⟨h, p⟩} _tf Header _and_ Lf _and_ Postings
+EmptyLine   ← {""} _tf Space _mb_rep _and_ Lf
+NextEntry   ← {⟨·, e⟩←𝕩⋄e} _tf (Lf _and_ EmptyLine _and_ Entry)
+Journal     ← Entry _and_ NextEntry _mb_rep
+
+input←•FChars "test.ledger"
