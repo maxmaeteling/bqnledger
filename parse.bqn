@@ -50,10 +50,11 @@ TAcode   ← Enclosed _or_ (NoSpace _rep)
 EqYMDOpt  ← {1<≠𝕩 ? 1⊑𝕩 ; ""} _tf (Eq _and_ YMD) _mb
 StatusOpt ← {0<≠𝕩 ? ⊑𝕩 ; ""} _tf (Status _and_ Space) _mb
 TACodeOpt ← {0<≠𝕩 ? ⊑𝕩 ; ""} _tf (TACode _and_ Space) _mb
-NoComment ← {("#"∾@+10) NotCC 𝕩} _mb_rep
-Comment   ← {0<≠𝕩 ? 1⊑𝕩 ; ""} _tf ({ "#" CC 𝕩} _and_ Rest) _mb
 
-PHeader ← YMD _and_ EqYMDOpt _and_ Space _and_ StatusOpt _and_ TACodeOpt _and_ NoComment _and_ Comment
+NoComm ← {(";"∾@+10) NotCC 𝕩} _mb_rep
+Comm   ← {0<≠𝕩 ? 1⊑𝕩 ; ""} _tf { ";" CC 𝕩} _and_ Rest
+
+PHeader ← YMD _and_ EqYMDOpt _and_ Space _and_ StatusOpt _and_ TACodeOpt _and_ NoComm _and_ (Comm _mb)
 Header  ← {⟨⟨⟨⟨⟨⟨y, y1⟩, ·⟩, s⟩, t⟩, c⟩, ·⟩ ← 𝕩 ⋄ ⟨y, y1, s, t, c⟩} _tf PHeader
 
 Num         ← Float _or_ Numeric
@@ -64,19 +65,20 @@ Com         ← CharsSpaces _or_ Enclosed
 SpaceMB     ← {""} _tf Space _mb
 SignSpaceMB ← {¬""≡𝕩 ? {'-'=0⊑𝕩 ? -1 ; 1} 𝕩 ; 1} _tf (Sign _and_ SpaceMb) _mb
 
-AmountSNC ← {⟨⟨s, a⟩, ⟨·, c⟩⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ Num _and_ ((SpaceMB _and_ Com) _mb)
-AmountSCN ← {⟨⟨s, ⟨c, ·⟩⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ (Com _and_ SpaceMB) _and_ Num
-Amount    ← AmountSNC _or_ AmountSCN
+AmountSNC ← {⟨⟨⟨s, a⟩, ·⟩, c⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ Num _and_ SpaceMB _and_ Com
+AmountSCN ← {⟨⟨⟨s, c⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ (Com _mb) _and_ SpaceMB _and_ Num
+Amount    ←  AmountSNC _or_ AmountSCN
 
 PostingAmount ← {⟨⟨⟨⟨·, acc⟩, ·⟩, ·⟩, am⟩ ← 𝕩 ⋄ ⟨acc, am⟩} _tf (Spaces _and_ {"  " Until 𝕩} _and_ Space _and_ Spaces _and_ Amount)
+PostingCom    ← {⟨⟩} _tf Spaces _and_ Comm
 PostingEmpty  ← {⟨·, r⟩ ← 𝕩 ⋄ ⟨r⟩} _tf Spaces _and_ Rest
-Posting       ← PostingAmount _or_ PostingEmpty
+Posting       ← PostingAmount _or_ PostingCom _or_ PostingEmpty
 NextPosting   ← {⟨·, p⟩ ← 𝕩 ⋄ p} _tf (Lf _and_ Posting)
 Postings      ← Posting _and_ (NextPosting _mb_rep)
 
 Entry       ← {⟨⟨h, ·⟩, p⟩ ← 𝕩 ⋄ ⟨h, p⟩} _tf Header _and_ Lf _and_ Postings
 EmptyLine   ← {""} _tf Space _mb_rep _and_ Lf
-NextEntry   ← {⟨·, e⟩ ← 𝕩 ⋄ e} _tf (Lf _and_ EmptyLine _and_ Entry)
+NextEntry   ← {⟨·, e⟩ ← 𝕩 ⋄ <e} _tf (Lf _and_ EmptyLine _and_ Entry)
 
 Journal ← Entry _and_ (NextEntry _mb_rep)
 
