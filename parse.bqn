@@ -71,12 +71,13 @@ Amount    ← AmountSNC _or_ AmountSCN
 PostingAmount ← {⟨⟨⟨⟨·, acc⟩, ·⟩, ·⟩, am⟩ ← 𝕩 ⋄ ⟨acc, am⟩} _tf (Spaces _and_ {"  " Until 𝕩} _and_ Space _and_ Spaces _and_ Amount)
 PostingEmpty  ← {⟨·, r⟩ ← 𝕩 ⋄ ⟨r⟩} _tf Spaces _and_ Rest
 Posting       ← PostingAmount _or_ PostingEmpty
+NextPosting   ← {⟨·, p⟩ ← 𝕩 ⋄ p} _tf (Lf _and_ Posting)
+Postings      ← Posting _and_ (NextPosting _mb_rep)
 
-NextPosting ← {⟨·, p⟩←𝕩⋄p} _tf (Lf _and_ Posting)
-Postings    ← Posting _and_ (NextPosting _mb_rep)
-Entry       ← {⟨⟨h, ·⟩, p⟩←𝕩⋄⟨h, p⟩} _tf Header _and_ Lf _and_ Postings
+Entry       ← {⟨⟨h, ·⟩, p⟩ ← 𝕩 ⋄ ⟨h, p⟩} _tf Header _and_ Lf _and_ Postings
 EmptyLine   ← {""} _tf Space _mb_rep _and_ Lf
-NextEntry   ← {⟨·, e⟩←𝕩⋄e} _tf (Lf _and_ EmptyLine _and_ Entry)
-Journal     ← Entry _and_ (NextEntry _mb_rep)
+NextEntry   ← {⟨·, e⟩ ← 𝕩 ⋄ e} _tf (Lf _and_ EmptyLine _and_ Entry)
+
+Journal ← Entry _and_ (NextEntry _mb_rep)
 
 input ← •FChars "test.ledger"
