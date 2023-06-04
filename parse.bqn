@@ -17,6 +17,7 @@ _mb_rep ← {m‿r ← 𝔽 𝕩 ⋄ ¬Err m‿r ? m0‿r0 ← 𝕊 r ⋄ ⟨m�
 _rep    ← {m‿r ← 𝔽 𝕩 ⋄ ¬Err m‿r ? m0‿r0 ← 𝔽 _mb_rep r ⋄ ⟨m∾m0, r0⟩ ; Fail 1}
 
 _tf     ← {¬Err 𝕩 ? m‿r ← 𝕩 ⋄ ⟨𝔽 m, r⟩ ; 𝕩}
+Listify ← {⟨e0, e⟩ ← 𝕩 ⋄ (<e0)∾e}
 
 NotLF ← {⟨@+10⟩ NotCC 𝕩}
 End   ← {𝕩≡⟨⟩ ? I 𝕩 ; Fail 1}
@@ -71,15 +72,15 @@ Amount    ←  AmountSNC _or_ AmountSCN
 
 PostingAmount ← {⟨⟨⟨⟨·, acc⟩, ·⟩, ·⟩, am⟩ ← 𝕩 ⋄ ⟨acc, am⟩} _tf (Spaces _and_ {"  " Until 𝕩} _and_ Space _and_ Spaces _and_ Amount)
 PostingCom    ← {⟨⟩} _tf Spaces _and_ Comm
-PostingEmpty  ← {⟨·, r⟩ ← 𝕩 ⋄ ⟨r⟩} _tf Spaces _and_ Rest
+PostingEmpty  ← {⟨·, r⟩ ← 𝕩 ⋄ ⟨r, ""⟩} _tf Spaces _and_ Rest
 Posting       ← PostingAmount _or_ PostingCom _or_ PostingEmpty
-NextPosting   ← {⟨·, p⟩ ← 𝕩 ⋄ p} _tf (Lf _and_ Posting)
-Postings      ← Posting _and_ (NextPosting _mb_rep)
+NextPosting   ← {⟨·, p⟩ ← 𝕩 ⋄ ⟨p⟩} _tf (Lf _and_ Posting)
+Postings      ← Listify _tf Posting _and_ (NextPosting _mb_rep)
 
 Entry       ← {⟨⟨h, ·⟩, p⟩ ← 𝕩 ⋄ ⟨h, p⟩} _tf Header _and_ Lf _and_ Postings
 EmptyLine   ← {""} _tf Space _mb_rep _and_ Lf
-NextEntry   ← {⟨·, e⟩ ← 𝕩 ⋄ e} _tf (Lf _and_ EmptyLine _and_ Entry)
+NextEntry   ← {⟨·, e⟩ ← 𝕩 ⋄ ⟨e⟩} _tf (Lf _and_ EmptyLine _and_ Entry)
 
-Journal ← Entry _and_ (NextEntry _mb_rep)
+Journal ← Listify _tf Entry _and_ (NextEntry _mb_rep)
 
 input ← •FChars "test.ledger"
