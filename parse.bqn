@@ -78,7 +78,7 @@ Postings      ← Posting _and_ (NextPosting _mb_rep)
 
 Entry       ← {⟨⟨h, ·⟩, p⟩ ← 𝕩 ⋄ ⟨h, p⟩} _tf Header _and_ Lf _and_ Postings
 EmptyLine   ← {""} _tf Space _mb_rep _and_ Lf
-NextEntry   ← {⟨·, e⟩ ← 𝕩 ⋄ <e} _tf (Lf _and_ EmptyLine _and_ Entry)
+NextEntry   ← {⟨·, e⟩ ← 𝕩 ⋄ e} _tf (Lf _and_ EmptyLine _and_ Entry)
 
 Journal ← Entry _and_ (NextEntry _mb_rep)
 
