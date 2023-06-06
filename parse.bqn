@@ -9,7 +9,7 @@ Fail ← {𝕤 ⋄ ⟨-1, ""⟩}
 Any  ← {E 𝕩 ? ⟨F 𝕩, R 𝕩⟩ ; Fail 1}
 Err  ← {⟨-1, ""⟩≡𝕩}
 
-_and_ ← {m0‿r0 ← 𝔽 𝕩 ⋄ ¬Err m0‿r0 ? m1‿r1 ← 𝔾 r0 ⋄ {¬Err m1‿r1? ⟨⟨m0, m1⟩, r1⟩ ; Fail 1} ; Fail 1}
+_and_ ← {m0‿r0 ← 𝔽 𝕩 ⋄ ¬Err m0‿r0 ? m1‿r1 ← 𝔾 r0 ⋄ {¬Err m1‿r1 ? ⟨⟨m0, m1⟩, r1⟩ ; Fail 1} ; Fail 1}
 _or_  ← {r ← 𝔽 𝕩 ⋄ ¬Err r ? r ; 𝔾 𝕩}
 
 _mb     ← {r ← 𝔽 𝕩 ⋄ ¬Err r ? r ; I 𝕩}
@@ -41,11 +41,11 @@ Status  ← {"*!" CC 𝕩}
 Eq      ← {"=" CC 𝕩}
 Sign    ← {"-" CC 𝕩}
 Lf      ← {"LF"} _tf {⟨@+10⟩ CC 𝕩}
-YMD     ← {⟨⟨⟨⟨y, ·⟩, m⟩, ·⟩, d⟩ ← 𝕩 ⋄ y‿m‿d} _tf {Numeric _and_ DateSep _and_ Numeric _and_ DateSep _and_ Numeric 𝕩}
+YMD     ← {⟨⟨⟨⟨y, ·⟩, m⟩, ·⟩, d⟩ ← 𝕩 ⋄ y‿m‿d} _tf Numeric _and_ DateSep _and_ Numeric _and_ DateSep _and_ Numeric
 
 NoSpace  ← {(" "∾@+10) NotCC 𝕩}
 Quote    ← {"""" CC 𝕩}
-Enclosed ← {⟨⟨·, r⟩, ·⟩←𝕩⋄r} _tf Quote _and_ ({"""" NotCC 𝕩} _rep) _and_ Quote
+Enclosed ← {⟨⟨·, r⟩, ·⟩ ← 𝕩 ⋄ r} _tf Quote _and_ ({"""" NotCC 𝕩} _rep) _and_ Quote
 TAcode   ← Enclosed _or_ (NoSpace _rep)
 
 EqYMDOpt  ← {1<≠𝕩 ? 1⊑𝕩 ; ""} _tf (Eq _and_ YMD) _mb
@@ -82,5 +82,8 @@ EmptyLine   ← {""} _tf Space _mb_rep _and_ Lf
 NextEntry   ← {⟨·, e⟩ ← 𝕩 ⋄ ⟨e⟩} _tf (Lf _and_ EmptyLine _and_ Entry)
 
 Journal ← Listify _tf Entry _and_ (NextEntry _mb_rep)
+ParseJournal ← ⊑Journal
 
 input ← •FChars "test.ledger"
+
+ParseJournal input
