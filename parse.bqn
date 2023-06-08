@@ -84,6 +84,13 @@ NextEntry   ← {⟨·, e⟩ ← 𝕩 ⋄ ⟨e⟩} _tf (Lf _and_ EmptyLine _and_
 Journal ← Listify _tf Entry _and_ (NextEntry _mb_rep)
 ParseJournal ← ⊑Journal
 
+# Transaction list
+>(↕≠j)∾¨0⊑¨j
+
+# Posting list
+>((↕≠j)/˜≠¨1⊑¨j)∾¨∾1⊑¨j
+
 input ← •FChars "test.ledger"
 
-ParseJournal input
+j ← ParseJournal input
+
