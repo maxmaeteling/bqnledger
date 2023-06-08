@@ -1,4 +1,5 @@
 Flatten ← {(∾𝕊¨)⍟(1<≡)⥊𝕩}
+Trim ← {(∨`∧∨`⌾⌽)' '≠𝕩}⊸/
 
 F ← {0⊑𝕩}
 R ← {1↓𝕩}
@@ -70,9 +71,9 @@ AmountSNC ← {⟨⟨⟨s, a⟩, ·⟩, c⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf Sig
 AmountSCN ← {⟨⟨⟨s, c⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ (Com _mb) _and_ SpaceMB _and_ Num
 Amount    ←  AmountSNC _or_ AmountSCN
 
-PostingAmount ← {⟨⟨⟨⟨·, acc⟩, ·⟩, ·⟩, am⟩ ← 𝕩 ⋄ ⟨acc, am⟩} _tf (Spaces _and_ {"  " Until 𝕩} _and_ Space _and_ Spaces _and_ Amount)
+PostingAmount ← {⟨⟨⟨⟨·, acc⟩, ·⟩, ·⟩, am⟩ ← 𝕩 ⋄ ⟨Trim acc, am⟩} _tf (Spaces _and_ {"  " Until 𝕩} _and_ Space _and_ Spaces _and_ Amount)
 PostingCom    ← {⟨⟩} _tf Spaces _and_ Comm
-PostingEmpty  ← {⟨·, r⟩ ← 𝕩 ⋄ ⟨r, ""⟩} _tf Spaces _and_ Rest
+PostingEmpty  ← {⟨·, r⟩ ← 𝕩 ⋄ ⟨Trim r, ""⟩} _tf Spaces _and_ Rest
 Posting       ← PostingAmount _or_ PostingCom _or_ PostingEmpty
 NextPosting   ← {⟨·, p⟩ ← 𝕩 ⋄ ⟨p⟩} _tf (Lf _and_ Posting)
 Postings      ← Listify _tf Posting _and_ (NextPosting _mb_rep)
@@ -82,15 +83,8 @@ EmptyLine   ← {""} _tf Space _mb_rep _and_ Lf
 NextEntry   ← {⟨·, e⟩ ← 𝕩 ⋄ ⟨e⟩} _tf (Lf _and_ EmptyLine _and_ Entry)
 
 Journal ← Listify _tf Entry _and_ (NextEntry _mb_rep)
-ParseJournal ← ⊑Journal
-
-# Transaction list
->(↕≠j)∾¨0⊑¨j
-
-# Posting list
->((↕≠j)/˜≠¨1⊑¨j)∾¨∾1⊑¨j
+ParseJournal ← { j ← ⊑Journal 𝕩 ⋄ (>(↕≠j)∾¨0⊑¨j)‿(>((↕≠j)/˜≠¨1⊑¨j)∾¨∾1⊑¨j) }
 
 input ← •FChars "test.ledger"
 
 j ← ParseJournal input
-
