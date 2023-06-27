@@ -73,7 +73,7 @@ Amount    ←  AmountSNC _or_ AmountSCN
 
 PostingAmount ← {⟨⟨⟨⟨·, acc⟩, ·⟩, ·⟩, am⟩ ← 𝕩 ⋄ ⟨Trim acc, am⟩} _tf (Spaces _and_ {"  " Until 𝕩} _and_ Space _and_ Spaces _and_ Amount)
 PostingCom    ← {⟨⟩} _tf Spaces _and_ Comm
-PostingEmpty  ← {⟨·, r⟩ ← 𝕩 ⋄ ⟨Trim r, ""⟩} _tf Spaces _and_ Rest
+PostingEmpty  ← {⟨·, r⟩ ← 𝕩 ⋄ ⟨Trim r, ⟨1, 0, -1⟩⟩} _tf Spaces _and_ Rest
 Posting       ← PostingAmount _or_ PostingCom _or_ PostingEmpty
 NextPosting   ← {⟨·, p⟩ ← 𝕩 ⋄ ⟨p⟩} _tf (Lf _and_ Posting)
 Postings      ← Listify _tf Posting _and_ (NextPosting _mb_rep)
@@ -87,4 +87,20 @@ ParseJournal ← { j ← ⊑Journal 𝕩 ⋄ (>(↕≠j)∾¨0⊑¨j)‿(>((↕�
 
 input ← •FChars "test.ledger"
 
-j ← ParseJournal input
+j‿k ← ParseJournal input
+⊑k⊔˜1-˜0⊏˘k=0
+
+# commodity per TA
+t ← ∾2↓¨2⊏˘k
+
+# unique commodities
+com ← ⊑t⊔˜1-˜∊t
+
+# amount array by commodities
+am ← (×´˘⊑˘2↑¨2↓˘k)×t≡⌜com
+
+# empty TAs are used for balancing
+empty_ta ← 0=+´˘am
+
+# balanced TAs
+am+¯1×-⟜»⌈`empty_ta×+`am
