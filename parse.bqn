@@ -3,7 +3,7 @@ Trim ← {(∨`∧∨`⌾⌽)' '≠𝕩}⊸/
 
 F ← {0⊑𝕩}
 R ← {1↓𝕩}
-E ← {0≠≠𝕩}
+E ← {""≢𝕩}
 
 I    ← {⟨"", 𝕩⟩}
 Fail ← {𝕤 ⋄ ⟨-1, ""⟩}
@@ -23,6 +23,8 @@ Listify ← {⟨e0, e⟩ ← 𝕩 ⋄ (<e0)∾e}
 NotLF ← {⟨@+10⟩ NotCC 𝕩}
 End   ← {𝕩≡⟨⟩ ? I 𝕩 ; Fail 1}
 Rest  ← {End _or_ (NotLF _mb_rep) 𝕩}
+
+String ← {¬E 𝕨 ? I 𝕩 ; 𝕨≡○{1↑𝕩}𝕩 ? 𝕨 String○{1↓𝕩} 𝕩 ; Fail 1}
 
 CC      ← {m‿r ← Any 𝕩 ⋄ (⊑m∊𝕨)∧¬Err m‿r ? m‿r ; Fail 1}
 NotCC   ← {m‿r ← Any 𝕩 ⋄ (¬⊑m∊𝕨)∧¬Err m‿r ? m‿r ; Fail 1}
@@ -78,11 +80,14 @@ Posting       ← PostingAmount _or_ PostingCom _or_ PostingEmpty
 NextPosting   ← {⟨·, p⟩ ← 𝕩 ⋄ ⟨p⟩} _tf (Lf _and_ Posting)
 Postings      ← Listify _tf Posting _and_ (NextPosting _mb_rep)
 
-Entry       ← {⟨⟨h, ·⟩, p⟩ ← 𝕩 ⋄ ⟨h, p⟩} _tf Header _and_ Lf _and_ Postings
+Entry       ← {⟨⟨h, ·⟩, p⟩ ← 𝕩 ⋄ ⟨⟨h, p⟩⟩} _tf Header _and_ Lf _and_ Postings
 EmptyLine   ← {""} _tf Space _mb_rep _and_ Lf
-NextEntry   ← {⟨·, e⟩ ← 𝕩 ⋄ ⟨e⟩} _tf (Lf _and_ EmptyLine _and_ Entry)
 
-Journal ← Listify _tf Entry _and_ (NextEntry _mb_rep)
+Include      ← {⟨·, f⟩ ← 𝕩 ⋄ ⊑Journal •FChars f} _tf {"include " String 𝕩} _and_ Rest
+JournalEntry ← Include _or_ Entry
+NextJournalEntry    ← {⟨·, e⟩ ← 𝕩 ⋄ ⟨e⟩} _tf (Lf _and_ EmptyLine _and_ JournalEntry)
+
+Journal ← {⟨e0, e⟩ ← 𝕩 ⋄ ∾⟨e0⟩∾e} _tf JournalEntry _and_ (NextJournalEntry _mb_rep)
 ParseJournal ← { j ← ⊑Journal 𝕩 ⋄ (>(↕≠j)∾¨0⊑¨j)‿(>((↕≠j)/˜≠¨1⊑¨j)∾¨∾1⊑¨j) }
 
 input ← •FChars "test.ledger"
@@ -100,7 +105,10 @@ com ← ⊑t⊔˜1-˜∊t
 am ← (×´˘⊑˘2↑¨2↓˘k)×t≡⌜com
 
 # empty TAs are used for balancing
-empty_ta ← 0=+´˘am
+e ← 0=+´˘am
 
 # balanced TAs
-am+¯1×-⟜»⌈`empty_ta×+`am
+bal ← am+¯1×-⟜»⌈`e×+`am
+
+# multiple commodities unbalanced
+1<+´˘0≠bal
