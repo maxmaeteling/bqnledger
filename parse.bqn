@@ -73,12 +73,13 @@ SignSpaceMB ← {¬""≡𝕩 ? {'-'=0⊑𝕩 ? -1 ; 1} 𝕩 ; 1} _tf (Sign _and_
 
 AmountSNC ← {⟨⟨⟨s, a⟩, ·⟩, c⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ Num _and_ SpaceMB _and_ Com
 AmountSCN ← {⟨⟨⟨s, c⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ (Com _mb) _and_ SpaceMB _and_ Num
-Amount    ←  AmountSNC _or_ AmountSCN
+AmountCSN ← {⟨⟨⟨⟨c, ·⟩, s⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf (Com _mb) _and_ SpaceMB _and_ SignSpaceMB _and_ SpaceMB _and_ Num
+Amount    ←  AmountSNC _or_ AmountSCN _or_ AmountCSN
 
 Comment     ← {⟨""⟩} _tf Space _mb_rep _and_ Comm
 
 PostingAmount ← {⟨⟨⟨⟨·, acc⟩, ·⟩, ·⟩, am⟩ ← 𝕩 ⋄ ⟨Trim acc, am⟩} _tf (Spaces _and_ {"  " Until 𝕩} _and_ Space _and_ Spaces _and_ Amount)
-PostingCom    ← {""} _tf Comment
+PostingCom    ← {""} _tf Spaces _and_ Comm
 PostingEmpty  ← {⟨·, r⟩ ← 𝕩 ⋄ ⟨Trim r, ⟨1, 0, -1⟩⟩} _tf Spaces _and_ Rest
 Posting       ← PostingAmount _or_ PostingCom _or_ PostingEmpty
 NextPosting   ← {⟨·, p⟩ ← 𝕩 ⋄ ⟨p⟩} _tf (Lf _and_ Posting)
@@ -111,8 +112,12 @@ am ← (×´˘⊑˘2↑¨2↓˘k)×t≡⌜com
 # empty TAs are used for balancing
 e ← 0=+´˘am
 
+# add empty posting fallback
+(1↑˘j)(¬∘∊/⊣)(e/1↑˘k)
+
 # balanced TAs
 bal ← am+¯1×-⟜»⌈`e×+`am
 
 # multiple commodities unbalanced
 1<+´˘0≠bal
+

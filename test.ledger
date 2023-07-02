@@ -1,25 +1,25 @@
 2022/10/22 * Beers
-    Expenses:Beers                            "EUR" 20
+    Expenses:Beers                          "EUR" 20
     Assets:Checking
 
 2022/10/22 * Beers
-    Expenses:Beers                            "EUR" 20
+    Expenses:Beers                          "EUR" 20
+    Assets:Checking                          EUR -20
+
+2022/10/22 * Beers
+    Expenses:Beers                             30.29 USD
+    Expenses:Beers                             30.29 USD
+    Expenses:Beers                             30.29 USD
     Assets:Checking    
 
 2022/10/22 * Beers
-    Expenses:Beers                            30.29 USD
-    Expenses:Beers                            30.29 USD
-    Expenses:Beers                            30.29 USD
+    Expenses:Beers                         SFR 30.29
     Assets:Checking    
 
 2022/10/22 * Beers
-    Expenses:Beers                            SFR 30.29
+    Expenses:Beers                         SFR 30.29
     Assets:Checking    
 
 2022/10/22 * Beers
-    Expenses:Beers                            SFR 30.29
-    Assets:Checking    
-
-2022/10/22 * Beers
-    Expenses:Beers                            SFR 30.29
+    Expenses:Beers                         SFR 30.29
     Assets:Checking    
