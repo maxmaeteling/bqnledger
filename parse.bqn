@@ -98,26 +98,36 @@ ParseJournal ← { j ← ⊑Journal 𝕩 ⋄ (>(↕≠j)∾¨0⊑¨j)‿(>((↕�
 input ← •FChars "test.ledger"
 
 j‿k ← ParseJournal input
-⊑k⊔˜1-˜0⊏˘k=0
 
-# commodity per TA
-t ← ∾2↓¨2⊏˘k
+AmountCols ← {
+		   # commodity per TA
+		   t ← ∾2↓¨2⊏˘𝕩
+		   
+		   # unique commodities
+		   com ← ⊑t⊔˜1-˜∊t
+		   
+		   # amount array by commodities
+		   am ← (×´˘⊑˘2↑¨2↓˘𝕩)×t≡⌜com
+		   
+		   com‿am
+}
 
-# unique commodities
-com ← ⊑t⊔˜1-˜∊t
-
-# amount array by commodities
-am ← (×´˘⊑˘2↑¨2↓˘k)×t≡⌜com
+com‿am ← AmountCols k
 
 # empty TAs are used for balancing
 e ← 0=+´˘am
 
 # add empty posting fallback
-(1↑˘j)(¬∘∊/⊣)(e/1↑˘k)
+em ← (1↑˘j)(¬∘∊/⊣)(e/1↑˘k)
+
+# add fallback rows at end and put them to right position
+tmp ← k∾(⍉∾⍉¨⟨em,(≠em)/≍"System:Error"‿⟨1, 0, -1⟩⟩)
+k0 ← tmp⊏˜⍋({𝕩≡⟨1, 0, -1⟩}¨(2↓˘tmp))+2×1↑˘tmp
+
+com0‿am0 ← AmountCols k0
 
 # balanced TAs
-bal ← am+¯1×-⟜»⌈`e×+`am
+bal ← am+¯1×-⟜»⌈`(0=+´˘am)×+`am
 
 # multiple commodities unbalanced
 1<+´˘0≠bal
-
