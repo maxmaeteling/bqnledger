@@ -88,7 +88,7 @@ Postings      ← RemEmpty _tf (Listify _tf Posting _and_ (NextPosting _mb_rep))
 EmptyLine   ← {""} _tf Space _mb_rep
 Entry       ← {⟨⟨⟨h, ·⟩, p⟩, ·⟩ ← 𝕩 ⋄ ⟨⟨h, p⟩⟩} _tf Header _and_ Lf _and_ Postings _and_ ((Lf _and_ EmptyLine) _or_ End)
 
-Include          ← {⟨⟨·, f⟩, ·⟩ ← 𝕩 ⋄ ⊑Journal •FChars f} _tf ({"include " String 𝕩} _and_ Rest)
+Include          ← {⟨·, f⟩ ← 𝕩 ⋄ ⊑Journal •FChars f} _tf ({"include " String 𝕩} _and_ Rest)
 JournalEntry     ← Include _or_ Entry _or_ Comment
 NextJournalEntry ← {⟨·, e⟩ ← 𝕩 ⋄ ⟨e⟩} _tf Lf _and_ JournalEntry
 
