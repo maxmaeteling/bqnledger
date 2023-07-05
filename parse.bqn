@@ -14,12 +14,13 @@ Err  ← {⟨-1, ""⟩≡𝕩}
 _and_ ← {m0‿r0 ← 𝔽 𝕩 ⋄ ¬Err m0‿r0 ? m1‿r1 ← 𝔾 r0 ⋄ {¬Err m1‿r1 ? ⟨⟨m0, m1⟩, r1⟩ ; Fail 1} ; Fail 1}
 _or_  ← {r ← 𝔽 𝕩 ⋄ ¬Err r ? r ; 𝔾 𝕩}
 
-_mb     ← {r ← 𝔽 𝕩 ⋄ ¬Err r ? r ; I 𝕩}
-_mb_rep ← {m‿r ← 𝔽 𝕩 ⋄ ¬Err m‿r ? m0‿r0 ← 𝕊 r ⋄ ⟨m∾m0, r0⟩; I 𝕩}
-_rep    ← {m‿r ← 𝔽 𝕩 ⋄ ¬Err m‿r ? m0‿r0 ← 𝔽 _mb_rep r ⋄ ⟨m∾m0, r0⟩ ; Fail 1}
+_mb       ← {r ← 𝔽 𝕩 ⋄ ¬Err r ? r ; I 𝕩}
+_mb_rep   ← {m‿r ← 𝔽 𝕩 ⋄ ¬Err m‿r ? m0‿r0 ← 𝕊 r ⋄ ⟨m∾m0, r0⟩; I 𝕩}
+_rep      ← {m‿r ← 𝔽 𝕩 ⋄ ¬Err m‿r ? m0‿r0 ← 𝔽 _mb_rep r ⋄ ⟨m∾m0, r0⟩ ; Fail 1}
+_rep_sep_ ← {𝔽 _and_ ((𝔾 _and_ 𝔽) _mb_rep)}
 
-_tf     ← {¬Err 𝕩 ? m‿r ← 𝕩 ⋄ ⟨𝔽 m, r⟩ ; 𝕩}
-Listify ← {⟨e0, e⟩ ← 𝕩 ⋄ (<e0)∾e}
+_tf       ← {¬Err 𝕩 ? m‿r ← 𝕩 ⋄ ⟨𝔽 m, r⟩ ; 𝕩}
+Listify   ← {⟨e0, e⟩ ← 𝕩 ⋄ (<e0)∾e}
 
 Lf      ← {""} _tf {⟨@+10⟩ CC 𝕩}
 NotLF   ← {⟨@+10⟩ NotCC 𝕩}
@@ -77,27 +78,21 @@ AmountSCN ← {⟨⟨⟨s, c⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf Sig
 AmountCSN ← {⟨⟨⟨⟨c, ·⟩, s⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf (Com _mb) _and_ SpaceMB _and_ SignSpaceMB _and_ SpaceMB _and_ Num
 Amount    ←  AmountSNC _or_ AmountSCN _or_ AmountCSN
 
-Comment     ← {⟨""⟩} _tf Space _mb_rep _and_ Comm
+Comment  ← {⟨""⟩} _tf Space _mb_rep _and_ Comm
 
-Acc     ← Symb _rep
-NextAcc ← {":" String 𝕩} _and_ Acc
-Account ← ⊑ _tf (Listify _tf Acc _and_ (NextAcc _mb_rep))
-
+Account       ← ⊑ _tf (Listify _tf ((Symb _rep) _rep_sep_ {":" String 𝕩}))
 PostingAmount ← {⟨⟨⟨acc, ·⟩, ·⟩, am⟩ ← 𝕩 ⋄ ⟨Trim acc, am⟩} _tf (Account _and_ Space _and_ Spaces _and_ Amount)
 PostingCom    ← {""} _tf Comm
 PostingEmpty  ← {⟨Trim 𝕩, ⟨1, 0, -1⟩⟩} _tf Rest
-Posting       ← {⟨·, r⟩ ← 𝕩 ⋄ r} _tf (Spaces) _and_ (PostingAmount _or_ PostingCom _or_ PostingEmpty)
-NextPosting   ← {⟨·, p⟩ ← 𝕩 ⋄ ⟨p⟩} _tf (Lf _and_ Posting)
-Postings      ← RemEmpty _tf (Listify _tf Posting _and_ (NextPosting _mb_rep))
+Posting       ← {⟨·, r⟩ ← 𝕩 ⋄ r} _tf Spaces _and_ (PostingAmount _or_ PostingCom _or_ PostingEmpty)
+Postings      ← RemEmpty _tf (Listify _tf (Posting _rep_sep_ Lf))
 
-EmptyLine   ← {""} _tf Space _mb_rep
-Entry       ← {⟨⟨⟨h, ·⟩, p⟩, ·⟩ ← 𝕩 ⋄ ⟨⟨h, p⟩⟩} _tf Header _and_ Lf _and_ Postings _and_ ((Lf _and_ EmptyLine) _or_ End)
+EmptyLine    ← {""} _tf Space _mb_rep
+Entry        ← {⟨⟨⟨h, ·⟩, p⟩, ·⟩ ← 𝕩 ⋄ ⟨⟨h, p⟩⟩} _tf Header _and_ Lf _and_ Postings _and_ ((Lf _and_ EmptyLine) _or_ End)
+Include      ← {⟨·, f⟩ ← 𝕩 ⋄ ⊑Journal •FChars f} _tf ({"include " String 𝕩} _and_ Rest)
+JournalEntry ← Include _or_ Entry _or_ Comment
 
-Include          ← {⟨·, f⟩ ← 𝕩 ⋄ ⊑Journal •FChars f} _tf ({"include " String 𝕩} _and_ Rest)
-JournalEntry     ← Include _or_ Entry _or_ Comment
-NextJournalEntry ← {⟨⟨·, ·⟩, e⟩ ← 𝕩 ⋄ ⟨e⟩} _tf Lf _and_ ((EmptyLine _and_ Lf) _mb_rep) _and_ JournalEntry
-
-Journal ← RemEmpty _tf ({⟨e0, e⟩ ← 𝕩 ⋄ ∾⟨e0⟩∾e} _tf JournalEntry _and_ (NextJournalEntry _mb_rep))
+Journal ← RemEmpty _tf ({⟨e0, e⟩ ← 𝕩 ⋄ ∾⟨e0⟩∾e} _tf (JournalEntry _rep_sep_ ((EmptyLine _and_ Lf) _mb_rep)))
 ParseJournal ← { j ← ⊑Journal 𝕩 ⋄ (>(↕≠j)∾¨0⊑¨j)‿(>((↕≠j)/˜≠¨1⊑¨j)∾¨∾1⊑¨j) }
 
 input ← •FChars "test_journal.ledger"
