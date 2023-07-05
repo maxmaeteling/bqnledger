@@ -81,7 +81,7 @@ Comment     ← {⟨""⟩} _tf Space _mb_rep _and_ Comm
 PostingAmount ← {⟨⟨⟨⟨·, acc⟩, ·⟩, ·⟩, am⟩ ← 𝕩 ⋄ ⟨Trim acc, am⟩} _tf (Spaces _and_ {"  " Until 𝕩} _and_ Space _and_ Spaces _and_ Amount)
 PostingCom    ← {""} _tf Spaces _and_ Comm
 PostingEmpty  ← {⟨·, r⟩ ← 𝕩 ⋄ ⟨Trim r, ⟨1, 0, -1⟩⟩} _tf Spaces _and_ Rest
-Posting       ← PostingAmount _or_ PostingCom _or_ PostingEmpty
+Posting       ← PostingCom _or_ PostingAmount _or_ PostingEmpty
 NextPosting   ← {⟨·, p⟩ ← 𝕩 ⋄ ⟨p⟩} _tf (Lf _and_ Posting)
 Postings      ← RemEmpty _tf (Listify _tf Posting _and_ (NextPosting _mb_rep))
 
@@ -90,7 +90,7 @@ Entry       ← {⟨⟨⟨h, ·⟩, p⟩, ·⟩ ← 𝕩 ⋄ ⟨⟨h, p⟩⟩} _
 
 Include          ← {⟨·, f⟩ ← 𝕩 ⋄ ⊑Journal •FChars f} _tf ({"include " String 𝕩} _and_ Rest)
 JournalEntry     ← Include _or_ Entry _or_ Comment
-NextJournalEntry ← {⟨·, e⟩ ← 𝕩 ⋄ ⟨e⟩} _tf Lf _and_ JournalEntry
+NextJournalEntry ← {⟨⟨·, ·⟩, e⟩ ← 𝕩 ⋄ ⟨e⟩} _tf Lf _and_ ((EmptyLine _and_ Lf) _mb_rep) _and_ JournalEntry
 
 Journal ← RemEmpty _tf ({⟨e0, e⟩ ← 𝕩 ⋄ ∾⟨e0⟩∾e} _tf JournalEntry _and_ (NextJournalEntry _mb_rep))
 ParseJournal ← { j ← ⊑Journal 𝕩 ⋄ (>(↕≠j)∾¨0⊑¨j)‿(>((↕≠j)/˜≠¨1⊑¨j)∾¨∾1⊑¨j) }
