@@ -64,10 +64,11 @@ PHeader ← YMD _and_ EqYMDOpt _and_ Space _and_ StatusOpt _and_ TACodeOpt _and_
 Header  ← {⟨⟨⟨⟨⟨⟨y, y1⟩, ·⟩, s⟩, t⟩, c⟩, ·⟩ ← 𝕩 ⋄ ⟨y, y1, s, t, c⟩} _tf PHeader
 
 Num         ← Float _or_ Numeric
-Chars       ← Char _rep
+Symb        ← {("0123456789-.@; """∾@+10) NotCC 𝕩}
+Symbs       ← Symb _rep
 Spaces      ← Space _rep
-CharsSpaces ← {Flatten 𝕩} _tf Chars _and_ ((Spaces _and_ Chars) _mb_rep)
-Com         ← CharsSpaces _or_ Enclosed
+SymbsSpaces ← Flatten _tf Symbs _and_ ((Spaces _and_ Symbs) _mb_rep)
+Com         ← SymbsSpaces _or_ Enclosed
 SpaceMB     ← {""} _tf Space _mb
 SignSpaceMB ← {¬""≡𝕩 ? {'-'=0⊑𝕩 ? -1 ; 1} 𝕩 ; 1} _tf (Sign _and_ SpaceMb) _mb
 
@@ -78,10 +79,14 @@ Amount    ←  AmountSNC _or_ AmountSCN _or_ AmountCSN
 
 Comment     ← {⟨""⟩} _tf Space _mb_rep _and_ Comm
 
-PostingAmount ← {⟨⟨⟨⟨·, acc⟩, ·⟩, ·⟩, am⟩ ← 𝕩 ⋄ ⟨Trim acc, am⟩} _tf (Spaces _and_ {"  " Until 𝕩} _and_ Space _and_ Spaces _and_ Amount)
-PostingCom    ← {""} _tf Spaces _and_ Comm
-PostingEmpty  ← {⟨·, r⟩ ← 𝕩 ⋄ ⟨Trim r, ⟨1, 0, -1⟩⟩} _tf Spaces _and_ Rest
-Posting       ← PostingCom _or_ PostingAmount _or_ PostingEmpty
+Acc     ← Symb _rep
+NextAcc ← {":" String 𝕩} _and_ Acc
+Account ← ⊑ _tf (Listify _tf Acc _and_ (NextAcc _mb_rep))
+
+PostingAmount ← {⟨⟨⟨acc, ·⟩, ·⟩, am⟩ ← 𝕩 ⋄ ⟨Trim acc, am⟩} _tf (Account _and_ Space _and_ Spaces _and_ Amount)
+PostingCom    ← {""} _tf Comm
+PostingEmpty  ← {⟨Trim 𝕩, ⟨1, 0, -1⟩⟩} _tf Rest
+Posting       ← {⟨·, r⟩ ← 𝕩 ⋄ r} _tf (Spaces) _and_ (PostingAmount _or_ PostingCom _or_ PostingEmpty)
 NextPosting   ← {⟨·, p⟩ ← 𝕩 ⋄ ⟨p⟩} _tf (Lf _and_ Posting)
 Postings      ← RemEmpty _tf (Listify _tf Posting _and_ (NextPosting _mb_rep))
 
@@ -95,7 +100,7 @@ NextJournalEntry ← {⟨⟨·, ·⟩, e⟩ ← 𝕩 ⋄ ⟨e⟩} _tf Lf _and_ (
 Journal ← RemEmpty _tf ({⟨e0, e⟩ ← 𝕩 ⋄ ∾⟨e0⟩∾e} _tf JournalEntry _and_ (NextJournalEntry _mb_rep))
 ParseJournal ← { j ← ⊑Journal 𝕩 ⋄ (>(↕≠j)∾¨0⊑¨j)‿(>((↕≠j)/˜≠¨1⊑¨j)∾¨∾1⊑¨j) }
 
-input ← •FChars "test.ledger"
+input ← •FChars "test_journal.ledger"
 
 j‿k ← ParseJournal input
 
