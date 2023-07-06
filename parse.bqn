@@ -73,15 +73,17 @@ Com         ← SymbsSpaces _or_ Enclosed
 SpaceMB     ← {""} _tf Space _mb
 SignSpaceMB ← {¬""≡𝕩 ? {'-'=0⊑𝕩 ? -1 ; 1} 𝕩 ; 1} _tf (Sign _and_ SpaceMb) _mb
 
-AmountSNC ← {⟨⟨⟨s, a⟩, ·⟩, c⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ Num _and_ SpaceMB _and_ Com
-AmountSCN ← {⟨⟨⟨s, c⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ (Com _mb) _and_ SpaceMB _and_ Num
-AmountCSN ← {⟨⟨⟨⟨c, ·⟩, s⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf (Com _mb) _and_ SpaceMB _and_ SignSpaceMB _and_ SpaceMB _and_ Num
-Amount    ←  AmountSNC _or_ AmountSCN _or_ AmountCSN
+AmountSNC  ← {⟨⟨⟨s, a⟩, ·⟩, c⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ Num _and_ SpaceMB _and_ Com
+AmountSCN  ← {⟨⟨⟨s, c⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ (Com _mb) _and_ SpaceMB _and_ Num
+AmountCSN  ← {⟨⟨⟨⟨c, ·⟩, s⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf (Com _mb) _and_ SpaceMB _and_ SignSpaceMB _and_ SpaceMB _and_ Num
+Amount     ← AmountSNC _or_ AmountSCN _or_ AmountCSN
+CostAmount ← {¯1↑𝕩} _tf (Spaces _and_ {"@" String 𝕩} _and_ Spaces _and_ Amount)
 
 Comment  ← {⟨""⟩} _tf Space _mb_rep _and_ Comm
 
 Account       ← ⊑ _tf (Listify _tf ((Symb _rep) _rep_sep_ {":" String 𝕩}))
-PostingAmount ← {⟨⟨⟨acc, ·⟩, ·⟩, am⟩ ← 𝕩 ⋄ ⟨Trim acc, am⟩} _tf (Account _and_ Space _and_ Spaces _and_ Amount)
+
+PostingAmount ← {⟨⟨⟨⟨acc, ·⟩, ·⟩, am⟩, am0⟩ ← 𝕩 ⋄ ⟨Trim acc, am⟩} _tf (Account _and_ Space _and_ Spaces _and_ Amount _and_ (CostAmount _mb))
 PostingCom    ← {""} _tf Comm
 PostingEmpty  ← {⟨Trim 𝕩, ⟨1, 0, -1⟩⟩} _tf Rest
 Posting       ← {⟨·, r⟩ ← 𝕩 ⋄ r} _tf Spaces _and_ (PostingAmount _or_ PostingCom _or_ PostingEmpty)
@@ -92,8 +94,8 @@ Entry        ← {⟨⟨⟨h, ·⟩, p⟩, ·⟩ ← 𝕩 ⋄ ⟨⟨h, p⟩⟩} 
 Include      ← {⟨·, f⟩ ← 𝕩 ⋄ ⊑Journal •FChars f} _tf ({"include " String 𝕩} _and_ Rest)
 JournalEntry ← Include _or_ Entry _or_ Comment
 
-Journal ← RemEmpty _tf ({⟨e0, e⟩ ← 𝕩 ⋄ ∾⟨e0⟩∾e} _tf (JournalEntry _rep_sep_ ((EmptyLine _and_ Lf) _mb_rep)))
-ParseJournal ← { j ← ⊑Journal 𝕩 ⋄ (>(↕≠j)∾¨0⊑¨j)‿(>((↕≠j)/˜≠¨1⊑¨j)∾¨∾1⊑¨j) }
+Journal      ← RemEmpty _tf ({⟨e0, e⟩ ← 𝕩 ⋄ ∾⟨e0⟩∾e} _tf (JournalEntry _rep_sep_ ((EmptyLine _and_ Lf) _mb_rep)))
+ParseJournal ← {j ← ⊑Journal 𝕩 ⋄ (>(↕≠j)∾¨0⊑¨j)‿(>((↕≠j)/˜≠¨1⊑¨j)∾¨∾1⊑¨j)}
 
 input ← •FChars "test_journal.ledger"
 
