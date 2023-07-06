@@ -73,17 +73,17 @@ Com         ← SymbsSpaces _or_ Enclosed
 SpaceMB     ← {""} _tf Space _mb
 SignSpaceMB ← {¬""≡𝕩 ? {'-'=0⊑𝕩 ? -1 ; 1} 𝕩 ; 1} _tf (Sign _and_ SpaceMb) _mb
 
-AmountSNC  ← {⟨⟨⟨s, a⟩, ·⟩, c⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ Num _and_ SpaceMB _and_ Com
-AmountSCN  ← {⟨⟨⟨s, c⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ (Com _mb) _and_ SpaceMB _and_ Num
-AmountCSN  ← {⟨⟨⟨⟨c, ·⟩, s⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf (Com _mb) _and_ SpaceMB _and_ SignSpaceMB _and_ SpaceMB _and_ Num
-Amount     ← AmountSNC _or_ AmountSCN _or_ AmountCSN
-CostAmount ← {⊑¯1↑𝕩} _tf (Spaces _and_ {"@" String 𝕩} _and_ Spaces _and_ Amount)
+AmountSNC   ← {⟨⟨⟨s, a⟩, ·⟩, c⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ Num _and_ SpaceMB _and_ Com
+AmountSCN   ← {⟨⟨⟨s, c⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf SignSpaceMB _and_ (Com _mb) _and_ SpaceMB _and_ Num
+AmountCSN   ← {⟨⟨⟨⟨c, ·⟩, s⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨s, a, c⟩} _tf (Com _mb) _and_ SpaceMB _and_ SignSpaceMB _and_ SpaceMB _and_ Num
+Amount      ← AmountSNC _or_ AmountSCN _or_ AmountCSN
+PriceAmount ← {⟨⟨⟨·, t⟩, ·⟩, a⟩ ← 𝕩 ⋄ ⟨t, a⟩} _tf (Spaces _and_ ({"@@" String 𝕩} _or_ {"@" String 𝕩}) _and_ Spaces _and_ Amount)
 
 Comment  ← {⟨""⟩} _tf Space _mb_rep _and_ Comm
 
 Account       ← ⊑ _tf (Listify _tf ((Symb _rep) _rep_sep_ {":" String 𝕩}))
 
-PostingAmount ← {⟨⟨⟨⟨acc, ·⟩, ·⟩, am⟩, am0⟩ ← 𝕩 ⋄ ⟨Trim acc, am, am0⟩} _tf (Account _and_ Space _and_ Spaces _and_ Amount _and_ (CostAmount _mb))
+PostingAmount ← {⟨⟨⟨⟨acc, ·⟩, ·⟩, am⟩, am0⟩ ← 𝕩 ⋄ ⟨Trim acc, am, am0⟩} _tf (Account _and_ Space _and_ Spaces _and_ Amount _and_ (PriceAmount _mb))
 PostingCom    ← {""} _tf Comm
 PostingEmpty  ← {⟨Trim 𝕩, ⟨1, 0, -1⟩, ⟨⟩⟩} _tf Rest
 Posting       ← {⟨·, r⟩ ← 𝕩 ⋄ r} _tf Spaces _and_ (PostingAmount _or_ PostingCom _or_ PostingEmpty)
