@@ -103,7 +103,7 @@ j‿k ← ParseJournal input
 
 AmountCols ← {
 		   # commodity per TA
-		   t ← ∾2↓¨2⊏˘𝕩
+		   t ← ⊑¨2↓¨2⊏˘𝕩
 		   
 		   # unique commodities
 		   com ← ⊑t⊔˜1-˜∊t
@@ -123,13 +123,28 @@ e ← 0=+´˘am
 em ← (1↑˘j)(¬∘∊/⊣)(e/1↑˘k)
 
 # add fallback rows at end and put them to right position
-tmp ← k∾(⍉∾⍉¨⟨em,(≠em)/≍"System:Error"‿⟨1, 0, -1⟩⟩)
-k0 ← tmp⊏˜⍋({𝕩≡⟨1, 0, -1⟩}¨(2↓˘tmp))+2×1↑˘tmp
+tmp ← k∾(⍉∾⍉¨⟨em,(≠em)/≍"System:Error"‿⟨1, 0, -1⟩‿⟨⟩⟩)
+k0 ← tmp⊏˜⍋({𝕩≡⟨1, 0, -1⟩}¨(2⊏˘tmp))+2×1↑˘tmp
 
-com0‿am0 ← AmountCols k0
+com‿am ↩ AmountCols k0
 
 # balanced TAs
-bal ← am+¯1×-⟜»⌈`(0=+´˘am)×+`am
+bal ← ⍉∾⍉¨⟨2↑˘k0, am+¯1×-⟜»⌈`(0=+´˘am)×+`am⟩
+
+# calculate account balance
+CalcBal ← {
+		# sort/ group accounts
+		s ← 𝕩⊏˜⍋1⊏˘𝕩
+
+		# last in group?
+		l ← ≢¨⟜«1⊏˘s
+
+		# merge dependent cumulative sums and accounts
+		⍉∾⍉¨⟨⍉≍l/(1⊏˘s),-⟜»l/+`2↓˘s⟩
+}
+
+CalcBal bal
+
 
 # multiple commodities unbalanced
 1<+´˘0≠bal
