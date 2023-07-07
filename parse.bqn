@@ -1,6 +1,6 @@
 Flatten ← {(∾𝕊¨)⍟(1<≡)⥊𝕩}
 Trim ← {(∨`∧∨`⌾⌽)' '≠𝕩}⊸/
-RemEmpty ← {⊑𝕩⊔˜1-˜0≠≠¨𝕩}
+RemEmpty ← {𝕩/˜0≠≠¨𝕩}
 
 F ← {0⊑𝕩}
 R ← {1↓𝕩}
@@ -97,20 +97,17 @@ JournalEntry ← Include _or_ Entry _or_ Comment
 Journal      ← RemEmpty _tf ({⟨e0, e⟩ ← 𝕩 ⋄ ∾⟨e0⟩∾e} _tf (JournalEntry _rep_sep_ ((EmptyLine _and_ Lf) _mb_rep)))
 ParseJournal ← {j ← ⊑Journal 𝕩 ⋄ (>(↕≠j)∾¨0⊑¨j)‿(>((↕≠j)/˜≠¨1⊑¨j)∾¨∾1⊑¨j)}
 
-input ← •FChars "test_journal.ledger"
+input ← •FChars "test.ledger"
 
 j‿k ← ParseJournal input
 
 AmountCols ← {
 		   # commodity per TA
 		   t ← ⊑¨2↓¨2⊏˘𝕩
-		   
 		   # unique commodities
-		   com ← ⊑t⊔˜1-˜∊t
-		   
+		   com ← ⍷t
 		   # amount array by commodities
 		   am ← (×´˘⊑˘2↑¨2↓˘𝕩)×t≡⌜com
-		   
 		   com‿am
 }
 
