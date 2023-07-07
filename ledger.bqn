@@ -23,7 +23,7 @@ e ← 0=+´˘am
 # add empty posting fallback
 em ← (1↑˘j)(¬∘∊/⊣)(e/1↑˘k)
 
-# add fallback rows at end and put them to right position
+# add fallback rows at end and put them to right index
 tmp ← k∾(⍉∾⍉¨⟨em,(≠em)/≍"System:Error"‿⟨1, 0, -1⟩‿⟨⟩⟩)
 k0 ← tmp⊏˜⍋({𝕩≡⟨1, 0, -1⟩}¨(2⊏˘tmp))+2×1↑˘tmp
 
@@ -41,14 +41,20 @@ CalcBal ← {
 		l ← ≢¨⟜«1⊏˘s
 
 		# merge dependent cumulative sums and accounts
-		⍉∾⍉¨⟨⍉≍l/(1⊏˘s),-⟜»l/+`2↓˘s⟩
+		⍉∾⍉¨⟨⍉≍l/1⊏˘s,-⟜»l/+`2↓˘s⟩
 }
 
 bal_sums ← CalcBal bal
 
+# calculate parent indexes from sorted depths
+DepthParents ← { ⌈´˘(𝕩=⌜1+˜↕⌈´𝕩)×⌈`(↕≠𝕩)×𝕩=⌜↕⌈´𝕩 }
+
 # create account tree
 AccountTree ← {
-			∧⍷∾{{𝕨∾":"∾𝕩}`𝕩⊔˜1-˜(𝕩≠':')×1++`𝕩=':'}¨𝕩
+			t ← (∧⍷∾{{𝕨∾":"∾𝕩}`𝕩⊔˜1-˜(𝕩≠':')×1++`𝕩=':'}¨𝕩)
+			dep ← (+´¨t=¨':')
+			par ← DepthParents dep
+			⟨t, dep, par⟩
 }
 
 AccountTree ⊏˘bal_sums
