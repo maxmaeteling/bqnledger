@@ -1,7 +1,6 @@
 ns_parser ← •Import "parse.bqn"
 ⟨Journal, ParseJournal⟩⇐ns_parser
 
-
 input ← •FChars "test.ledger"
 
 j‿k ← ParseJournal input
@@ -45,8 +44,14 @@ CalcBal ← {
 		⍉∾⍉¨⟨⍉≍l/(1⊏˘s),-⟜»l/+`2↓˘s⟩
 }
 
-CalcBal bal
+bal_sums ← CalcBal bal
 
+# create account tree
+AccountTree ← {
+			∧⍷∾{{𝕨∾":"∾𝕩}`𝕩⊔˜1-˜(𝕩≠':')×1++`𝕩=':'}¨𝕩
+}
+
+AccountTree ⊏˘bal_sums
 
 # multiple commodities unbalanced
 1<+´˘0≠bal
