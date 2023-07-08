@@ -82,7 +82,7 @@ AmountCSN   ← {⟨⟨⟨⟨c, ·⟩, s⟩, ·⟩, a⟩ : ⟨⊑s, a, c⟩} _tf
 Amount      ← AmountSNC _or_ AmountSCN _or_ AmountCSN
 PriceAmount ← {⟨⟨⟨·, t⟩, ·⟩, a⟩ : ⋄ ⟨t, a⟩} _tf (Spaces _and_ ({"@@" String 𝕩} _or_ {"@" String 𝕩}) _and_ Spaces _and_ Amount)
 
-Comment  ← {⟨""⟩} _tf Space _mb_rep _and_ Comm
+Comment  ← ⟨""⟩ _tf Space _mb_rep _and_ Comm
 
 Account       ← ⊑ _tf (Listify _tf ((Symb _rep) _rep_sep_ {":" String 𝕩}))
 
