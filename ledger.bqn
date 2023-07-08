@@ -33,7 +33,7 @@ com‿am ↩ AmountCols k0
 bal ← ⍉∾⍉¨⟨2↑˘k0, am+¯1×-⟜»⌈`(0=+´˘am)×+`am⟩
 
 # calculate account balance
-CalcBal ← {
+CalcBalPlain ← {
 		# sort/ group accounts
 		s ← 𝕩⊏˜⍋1⊏˘𝕩
 
@@ -44,20 +44,30 @@ CalcBal ← {
 		⍉∾⍉¨⟨⍉≍l/1⊏˘s,-⟜»l/+`2↓˘s⟩
 }
 
-bal_sums ← CalcBal bal
+AccountParents ← {{𝕨∾":"∾𝕩}`𝕩⊔˜1-˜(𝕩≠':')×1++`𝕩=':'}
 
-# calculate parent indexes from sorted depths
-DepthParents ← { ⌈´˘(𝕩=⌜1+˜↕⌈´𝕩)×⌈`(↕≠𝕩)×𝕩=⌜↕⌈´𝕩 }
-
-# create account tree
-AccountTree ← {
-			t ← (∧⍷∾{{𝕨∾":"∾𝕩}`𝕩⊔˜1-˜(𝕩≠':')×1++`𝕩=':'}¨𝕩)
-			dep ← (+´¨t=¨':')
-			par ← DepthParents dep
-			⟨t, dep, par⟩
+# Add balances to parents and then reapply cumulation
+CalcBal ← {
+		AccountBF      ← {p ← AccountParents ⊑1↑𝕩 ⋄ <⍉∾⍉¨⟨⍉≍p, (≠p)/≍1↓⥊𝕩⟩}
+		s              ← {{⟨⟩≢𝕩}¨⊏˘𝕩}⊸/CalcBalPlain 𝕩
+		b              ← ⊏˜⟜{⍋1↑˘𝕩}∾´AccountBF˘ s
+		CalcBalPlain ⍉∾⍉¨⟨+`≢¨⟜»1↑˘b, b⟩
 }
 
-AccountTree ⊏˘bal_sums
+CalcBal bal
+
+# # calculate parent indexes from sorted depths
+# DepthParents ← { ⌈´˘(𝕩=⌜1+˜↕⌈´𝕩)×⌈`(↕≠𝕩)×𝕩=⌜↕⌈´𝕩 }
+
+# # create account tree
+# AccountTree ← {
+# 			t ← (∧⍷∾{{𝕨∾":"∾𝕩}`𝕩⊔˜1-˜(𝕩≠':')×1++`𝕩=':'}¨𝕩)
+# 			dep ← (+´¨t=¨':')
+# 			par ← DepthParents dep
+# 			⟨t, dep, par⟩
+# }
+
+# AccountTree ⊏˘bal_sums
 
 # multiple commodities unbalanced
 1<+´˘0≠bal

@@ -1,6 +1,6 @@
-2022/10/22 * Beers
+2022/10/22 * (0815) Beers
     Expenses:Beers                          "EUR" 20
-    Assets:Checking
+    Assets:Bank:Checking
 
 2022/10/22 * Beers
     Expenses:Beers                          "EUR" 20
@@ -12,7 +12,7 @@
     Expenses:Beers                             30.29 USD
     Assets:Checking    
 
-2022/10/22 * Beers
+2022/10/22 * (4711) Beers
     Expenses:Beers                         SFR 30.29
     Assets:Checking    
 
