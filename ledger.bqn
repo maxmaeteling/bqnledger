@@ -7,13 +7,13 @@ j‿k ← ParseJournal input
 
 # Amounts to columns by commodity
 CommodityCols ← {
-		   # commodity per TA
-		   t ← ⊑¨2↓¨2⊏˘𝕩
-		   # unique commodities
-		   com ← ⍷t
-		   # amount array by commodities
-		   am ← (×´˘⊑˘2↑¨2↓˘𝕩)×t≡⌜com
-		   com‿am
+			  # commodity per TA
+			  t ← ⊑¨2↓¨2⊏˘𝕩
+			  # unique commodities
+			  com ← ⍷t
+			  # amount array by commodities
+			  am ← (×´˘⊑˘2↑¨2↓˘𝕩)×t≡⌜com
+			  com‿am
 }
 
 com‿am ← CommodityCols k
