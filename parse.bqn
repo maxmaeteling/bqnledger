@@ -54,11 +54,11 @@ YMD     ← {⟨⟨⟨⟨y, ·⟩, m⟩, ·⟩, d⟩ : y‿m‿d} _tf Numeric _a
 NoSpace  ← {(" "∾@+10) NotCC 𝕩}
 Quote    ← {"""" CC 𝕩}
 Enclosed ← {⟨⟨·, r⟩, ·⟩ : r} _tf Quote _and_ ({"""" NotCC 𝕩} _rep) _and_ Quote
-TAcode   ← Enclosed _or_ (NoSpace _rep)
+TAcode   ← (Char _or_ Digit )_rep
 
 EqYMDOpt  ← {1<≠𝕩 ? 1⊑𝕩 ; ""} _tf (Eq _and_ YMD) _mb
 StatusOpt ← {0<≠𝕩 ? ⊑𝕩 ; ""} _tf (Status _and_ Space) _mb
-TACodeOpt ← {0<≠𝕩 ? ⊑𝕩 ; ""} _tf (TACode _and_ Space) _mb
+TACodeOpt ← {0<≠𝕩 ? ⟨⟨⟨·, s⟩, ·⟩, ·⟩ ← 𝕩 ⋄ s ; ""} _tf ({"(" String 𝕩} _and_ TACode _and_ {")" String 𝕩} _and_ Space) _mb
 
 NoComm ← {(";"∾@+10) NotCC 𝕩} _mb_rep
 Comm   ← {0<≠𝕩 ? 1⊑𝕩 ; ""} _tf { ";" CC 𝕩} _and_ Rest
@@ -76,9 +76,9 @@ SpaceMB      ← "" _tf Space _mb
 # Box the return since -1 is valid
 SignsSpaceMB ← {⟨n, ·⟩ : <¯1⋆≠n} _tf ((Sign _mb_rep) _and_ (Space _mb_rep))
 
-AmountSNC   ← {⟨⟨⟨⊑s, a⟩, ·⟩, c⟩ : ⟨s, a, c⟩} _tf SignsSpaceMB _and_ Num _and_ SpaceMB _and_ Com
-AmountSCN   ← {⟨⟨⟨⊑s, c⟩, ·⟩, a⟩ : ⟨s, a, c⟩} _tf SignsSpaceMB _and_ (Com _mb) _and_ SpaceMB _and_ Num
-AmountCSN   ← {⟨⟨⟨⟨c, ·⟩, ⊑s⟩, ·⟩, a⟩ : ⟨s, a, c⟩} _tf (Com _mb) _and_ SpaceMB _and_ SignsSpaceMB _and_ SpaceMB _and_ Num
+AmountSNC   ← {⟨⟨⟨s, a⟩, ·⟩, c⟩ : ⟨⊑s, a, c⟩} _tf SignsSpaceMB _and_ Num _and_ SpaceMB _and_ Com
+AmountSCN   ← {⟨⟨⟨s, c⟩, ·⟩, a⟩ : ⟨⊑s, a, c⟩} _tf SignsSpaceMB _and_ (Com _mb) _and_ SpaceMB _and_ Num
+AmountCSN   ← {⟨⟨⟨⟨c, ·⟩, s⟩, ·⟩, a⟩ : ⟨⊑s, a, c⟩} _tf (Com _mb) _and_ SpaceMB _and_ SignsSpaceMB _and_ SpaceMB _and_ Num
 Amount      ← AmountSNC _or_ AmountSCN _or_ AmountCSN
 PriceAmount ← {⟨⟨⟨·, t⟩, ·⟩, a⟩ : ⋄ ⟨t, a⟩} _tf (Spaces _and_ ({"@@" String 𝕩} _or_ {"@" String 𝕩}) _and_ Spaces _and_ Amount)
 
