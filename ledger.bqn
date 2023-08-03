@@ -11,7 +11,7 @@ of ← 1‿0‿¯1
 # Amounts to columns by commodity
 CommodityCols ← {
 			  # commodity per TA
-			  t ← ⊑¨2↓¨2⊏˘𝕩
+			  t  ← ⊑¨2↓¨2⊏˘𝕩
 			  # unique commodities
 			  com ← ⍷t
 			  # amount array by commodities
@@ -23,15 +23,15 @@ com‿am ← CommodityCols k
 
 # Overflow rows for balancing
 ErrorRows ← {
-		  am‿j‿k :
-		  # empty TAs are used for balancing
-          e ← 0=+´˘am
-          # add empty posting fallback
-          em ← (1↑˘j)(¬∘∊/⊣)(e/1↑˘k)
-          # append fallback rows 
-          t ← k∾(⍉∾⍉¨⟨em,(≠em)/≍⟨err, of, ⟨⟩⟩⟩)
-		  # put fallback rows to right index
-          t⊏˜⍋({𝕩≡of}¨(2⊏˘t))+2×1↑˘t
+	  am‿j‿k :
+	  # empty TAs are used for balancing
+	  e ← 0=+´˘am
+	  # add empty posting fallback
+	  em ← (1↑˘j)(¬∘∊/⊣)(e/1↑˘k)
+	  # append fallback rows 
+	  t ← k∾(⍉∾⍉¨⟨em,(≠em)/≍⟨err, of, ⟨⟩⟩⟩)
+	  # put fallback rows to right index
+	  t⊏˜⍋({𝕩≡of}¨(2⊏˘t))+2×1↑˘t
 }
 
 k0 ← ErrorRows am‿j‿k
@@ -49,7 +49,13 @@ BalancingErrors ← {
 				o0 ← {({of≡𝕩}¨2⊏˘k)∧¬{err≡𝕩}¨1⊏˘k}×¬({2>+´|¨𝕩})˘×¨2↓˘b
 				m ← b/˜0<¨e0+o0
 }
-•Show BalancingErrors ⟨k0, bal⟩
+err ← BalancingErrors ⟨k0, bal⟩
+
+# match 𝕩 to 𝕨 based on id in first col
+MatchFirst ← {
+		  ⟨𝕨,𝕩⊏˜𝕨⊏○(⊑˘)𝕩⟩
+}
+err MatchFirst j
 
 RemErrorRows ← {𝕩/˜{err≢𝕩}¨1⊏˘𝕩}
 bal ↩ RemErrorRows bal
