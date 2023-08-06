@@ -49,13 +49,13 @@ BalancingErrors ← {
 				o0 ← {({of≡𝕩}¨2⊏˘k)∧¬{err≡𝕩}¨1⊏˘k}×¬({2>+´|¨𝕩})˘×¨2↓˘b
 				m ← b/˜0<¨e0+o0
 }
-err ← BalancingErrors ⟨k0, bal⟩
+errs ← BalancingErrors ⟨k0, bal⟩
 
 # match 𝕩 to 𝕨 based on id in first col
 MatchFirst ← {
 		  ⟨𝕨,𝕩⊏˜𝕨⊏○(⊑˘)𝕩⟩
 }
-err MatchFirst j
+errs MatchFirst j
 
 RemErrorRows ← {𝕩/˜{err≢𝕩}¨1⊏˘𝕩}
 bal ↩ RemErrorRows bal
@@ -81,6 +81,14 @@ CalcBal ← {
 }
 
 CalcBal bal
+
+# Add total row to bal report
+BalTotals ← {
+		  t ← +´˘⍉1↓˘𝕩
+		  𝕩∾t∾˜<"Total"
+}
+
+BalTotals bal
 
 # # calculate parent indexes from sorted depths
 # DepthParents ← { ⌈´˘(𝕩=⌜1+˜↕⌈´𝕩)×⌈`(↕≠𝕩)×𝕩=⌜↕⌈´𝕩 }
