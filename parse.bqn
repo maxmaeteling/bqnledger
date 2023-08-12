@@ -24,11 +24,7 @@ _rep_sep_ ← {𝔽 _and_ ((𝔾 _and_ 𝔽) _mb_rep)}
 _tf       ← {¬Err 𝕩 ? m‿r ← 𝕩 ⋄ ⟨𝔽 m, r⟩ ; 𝕩}
 Listify   ← {⟨e0, e⟩ : (<e0)∾e}
 
-Lf      ← "" _tf {⟨@+10⟩ CC 𝕩}
-NotLF   ← {⟨@+10⟩ NotCC 𝕩}
 End     ← {E 𝕩 ? I 𝕩 ; Fail 1}
-LfOrEnd ← Lf _or_ End
-Rest    ← {End _or_ (NotLF _mb_rep) 𝕩}
 
 String  ← {𝕨≡(≠𝕨)↑𝕩 ? ⟨𝕨, (≠𝕨)↓𝕩⟩ ; Fail 1}
 
@@ -40,6 +36,10 @@ Lower   ← {('a'+↕26) CC 𝕩}
 Upper   ← {('A'+↕26) CC 𝕩}
 Char    ← Upper _or_ Lower
 Numeric ← {•ParseFloat 𝕩} _tf Digit _rep
+Lf      ← "" _tf {⟨@+10⟩ CC 𝕩}
+NotLF   ← {⟨@+10⟩ NotCC 𝕩}
+LfOrEnd ← Lf _or_ End
+Rest    ← {End _or_ (NotLF _mb_rep) 𝕩}
 
 DecSep  ← {"." CC 𝕩}
 Float   ← {•ParseFloat >Flatten 𝕩} _tf (Digit _rep) _and_ ((DecSep _and_ (Digit _rep)) _mb)
@@ -70,8 +70,8 @@ Num          ← Float _or_ Numeric
 Symb         ← {("0123456789-.@; """∾@+10) NotCC 𝕩}
 Symbs        ← Symb _rep
 Spaces       ← Space _rep
-SymbsSpaces  ← Flatten _tf Symbs _and_ ((Spaces _and_ Symbs) _mb_rep)
-Com          ← SymbsSpaces _or_ Enclosed
+#SymbsSpaces  ← Flatten _tf Symbs _and_ ((Spaces _and_ Symbs) _mb_rep)
+Com          ← Symbs _or_ Enclosed
 SpaceMB      ← "" _tf Space _mb
 # Box the return since -1 is valid
 SignsSpaceMB ← {⟨n, ·⟩ : <¯1⋆≠n} _tf ((Sign _mb_rep) _and_ (Space _mb_rep))
@@ -91,6 +91,8 @@ PostingCom    ← "" _tf Comm
 PostingEmpty  ← {⟨Trim 𝕩, ⟨1, 0, -1⟩, ⟨⟩⟩} _tf Rest
 Posting       ← {⟨·, r⟩ : r} _tf Spaces _and_ (PostingAmount _or_ PostingCom _or_ PostingEmpty)
 Postings      ← RemEmpty _tf (Listify _tf (Posting _rep_sep_ Lf))
+
+PriceLine ←  {⟨⟨⟨⟨⟨·, d⟩, ·⟩, c⟩, ·⟩, n⟩: ⟨d, ⟨00, 00⟩, c, n⟩} _tf {"P " String 𝕩} _and_ YMD _and_ Spaces _and_ Com _and_ Spaces _and_ Amount
 
 EmptyLine    ← "" _tf Space _mb_rep
 Entry        ← {⟨⟨⟨h, ·⟩, p⟩, ·⟩ : ⟨⟨h, p⟩⟩} _tf Header _and_ Lf _and_ Postings _and_ ((Lf _and_ EmptyLine) _or_ End)
