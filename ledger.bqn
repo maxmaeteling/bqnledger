@@ -4,11 +4,14 @@
 
 input ← •FChars "test.ledger"
 
-j‿k ← ParseJournal input
+KeepEntries  ← {1↓¨𝕩/˜(⊑¨𝕩)∊⋈"e"}
+KeepEntries ⊑Journal input
 
-⟨com, bal, errs⟩ ← j ProcessInput k
+# j‿k ← ParseJournal input
 
-fields_ta ← ⟨"index", "date", "date_cleared", "status", "ta_code", "desc"⟩
-fields_posting ← ⟨"index", "account", "ac", "ac_price"⟩
+# ⟨com, bal, errs⟩ ← j ProcessInput k
 
-ReportBal bal
+# fields_ta ← ⟨"index", "date", "date_cleared", "status", "ta_code", "desc"⟩
+# fields_posting ← ⟨"index", "account", "ac", "ac_price"⟩
+
+# ReportBal bal
