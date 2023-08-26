@@ -4,7 +4,7 @@
 
 input ← •FChars "test.ledger"
 
-j‿k ← ParseJournal input
+j‿k‿p ← ParseJournalPrices input
 
 ⟨com, bal, errs⟩ ← j ProcessInput k
 
