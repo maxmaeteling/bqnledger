@@ -1,4 +1,4 @@
-⟨Journal, ParseJournal⟩⇐
+⟨Journal, ParseJournal, ParseJournalPrices⟩⇐
 
 Flatten ← {(∾𝕊¨)⍟(1<≡)⥊𝕩}
 Trim ← {(∨`∧∨`⌾⌽)' '≠𝕩}⊸/
@@ -98,5 +98,9 @@ Include      ← {⟨·, f⟩ : ⋄ ⟨"i", ⊑Journal •FChars f⟩} _tf ({"in
 PriceLine    ← {⟨⟨⟨⟨⟨·, d⟩, ·⟩, c⟩, ·⟩, n⟩: ⟨"p", ⟨d, ⟨00, 00⟩, c, n⟩⟩} _tf {"P " String 𝕩} _and_ YMD _and_ Spaces _and_ Com _and_ Spaces _and_ Amount
 JournalEntry ← Include _or_ Entry _or_ Comment
 
-Journal      ← {⟨h, t⟩: (<h)∾∾´<¨t} _tf (JournalEntry _rep_sep_ ((EmptyLine _and_ Lf) _mb_rep))
-ParseJournal ← {j ← ⊑Journal 𝕩 ⋄ (>(↕≠j)∾¨0⊑¨j)‿(>((↕≠j)/˜≠¨1⊑¨j)∾¨∾1⊑¨j)}
+Journal       ← {⟨h, t⟩: (<h)∾∾´<¨t} _tf (JournalEntry _rep_sep_ ((EmptyLine _and_ Lf) _mb_rep))
+KeepEntries   ← {⊑¨⊑¨1↓¨𝕩/˜(⊑¨𝕩)∊"e"‿"i"}
+KeepPrices    ← {⊑¨⊑¨1↓¨𝕩/˜(⊑¨𝕩)∊⋈"p"}
+JournalMatrix ← {(>(↕≠𝕩)∾¨0⊑¨𝕩)‿(>((↕≠𝕩)/˜≠¨1⊑¨𝕩)∾¨∾1⊑¨𝕩)}
+ParseJournal  ← {JournalMatrix KeepEntries ⊑Journal 𝕩}
+ParseJournalPrices ← {j ← Journal 𝕩 ⋄ ⟨JournalMatrix KeepEntries ⊑j, KeepPrices ⊑j⟩}
