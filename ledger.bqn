@@ -11,4 +11,4 @@ j‿k‿p ← ParseJournalPrices input
 # fields_ta ← ⟨"index", "date", "date_cleared", "status", "ta_code", "desc"⟩
 # fields_posting ← ⟨"index", "account", "ac", "ac_price"⟩
 
-# ReportBal bal
+ReportBal bal

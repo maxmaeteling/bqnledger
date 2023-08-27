@@ -99,8 +99,8 @@ PriceLine    ← {⟨⟨⟨⟨⟨·, d⟩, ·⟩, c⟩, ·⟩, n⟩: ⟨"p", ⟨
 JournalEntry ← Include _or_ Entry _or_ PriceLine _or_ Comment
 
 Journal       ← {⟨h, t⟩: (<h)∾∾´<¨t} _tf (JournalEntry _rep_sep_ ((EmptyLine _and_ Lf) _mb_rep))
-KeepEntries   ← {∾⊑¨1↓¨𝕩/˜(⊑¨𝕩)∊"e"‿"i"}
-KeepPrices    ← {⊑¨1↓¨𝕩/˜(⊑¨𝕩)∊⋈"p"}
+KeepEntries   ← {∾⊑¨1↓¨𝕩/˜(∾1↑¨𝕩)∊"e"‿"i"}
+KeepPrices    ← {⊑¨1↓¨𝕩/˜(∾1↑¨𝕩)∊⋈"p"}
 JournalMatrix ← {(>(↕≠𝕩)∾¨0⊑¨𝕩)‿(>((↕≠𝕩)/˜≠¨1⊑¨𝕩)∾¨∾1⊑¨𝕩)}
 ParseJournal  ← {JournalMatrix KeepEntries ⊑Journal 𝕩}
 ParseJournalPrices ← {j ← Journal 𝕩 ⋄ (JournalMatrix KeepEntries ⊑j)∾<>KeepPrices ⊑j}
