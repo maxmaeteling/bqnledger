@@ -82,7 +82,7 @@ AmountCSN   ← {⟨⟨⟨⟨c, ·⟩, s⟩, ·⟩, a⟩ : ⟨⊑s, a, c⟩} _tf
 Amount      ← AmountSNC _or_ AmountSCN _or_ AmountCSN
 PriceAmount ← {⟨⟨⟨·, t⟩, ·⟩, a⟩ : ⋄ ⟨t, a⟩} _tf (Spaces _and_ ({"@@" String 𝕩} _or_ {"@" String 𝕩}) _and_ Spaces _and_ Amount)
 
-Comment  ← ⟨"c"⟩ _tf Space _mb_rep _and_ Comm
+Comment  ← ⟨⟨"c"⟩⟩ _tf Space _mb_rep _and_ Comm
 
 Account       ← ⊑ _tf (Listify _tf ((Symb _rep) _rep_sep_ {":" String 𝕩}))
 
@@ -94,7 +94,7 @@ Postings      ← RemEmpty _tf (Listify _tf (Posting _rep_sep_ Lf))
 
 EmptyLine    ← "c" _tf Space _mb_rep
 Entry        ← {⟨⟨⟨h, ·⟩, p⟩, ·⟩ : ⟨"e", ⟨⟨h, p⟩⟩⟩} _tf Header _and_ Lf _and_ Postings _and_ ((Lf _and_ EmptyLine) _or_ End)
-Include      ← {⟨·, f⟩ : ⋄ ⟨"i", ⊑Journal •FChars f⟩} _tf ({"include " String 𝕩} _and_ Rest)
+Include      ← {⟨·, f⟩ : ⋄ ⟨"i", KeepEntries ⊑Journal •FChars f⟩} _tf ({"include " String 𝕩} _and_ Rest)
 PriceLine    ← {⟨⟨⟨⟨⟨·, d⟩, ·⟩, c⟩, ·⟩, n⟩: ⟨"p", ⟨d, ⟨00, 00⟩, c, n⟩⟩} _tf {"P " String 𝕩} _and_ YMD _and_ Spaces _and_ Com _and_ Spaces _and_ Amount
 JournalEntry ← Include _or_ Entry _or_ PriceLine _or_ Comment
 
