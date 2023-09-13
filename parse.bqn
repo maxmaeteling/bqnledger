@@ -95,7 +95,7 @@ Postings      ← RemEmpty _tf (Listify _tf (Posting _rep_sep_ Lf))
 EmptyLine    ← "c" _tf Space _mb_rep
 Entry        ← {⟨⟨⟨h, ·⟩, p⟩, ·⟩ : ⟨"e", ⟨⟨h, p⟩⟩⟩} _tf Header _and_ Lf _and_ Postings _and_ ((Lf _and_ EmptyLine) _or_ End)
 Include      ← {⟨·, f⟩ : ⋄ ⟨"i", KeepEntries ⊑Journal •FChars f⟩} _tf ({"include " String 𝕩} _and_ Rest)
-PriceLine    ← {⟨⟨⟨⟨⟨·, d⟩, ·⟩, c⟩, ·⟩, n⟩: ⟨"p", ⟨d, ⟨00, 00⟩, c, n⟩⟩} _tf {"P " String 𝕩} _and_ YMD _and_ Spaces _and_ Com _and_ Spaces _and_ Amount
+PriceLine    ← {⟨⟨⟨⟨⟨·, d⟩, ·⟩, c⟩, ·⟩, n⟩: ⟨"p", ⟨d, ⟨00, 00⟩, ⟨1, 1, c⟩, n⟩⟩} _tf {"P " String 𝕩} _and_ YMD _and_ Spaces _and_ Com _and_ Spaces _and_ Amount
 JournalEntry ← Include _or_ Entry _or_ PriceLine _or_ Comment
 
 Journal       ← {⟨h, t⟩: (<h)∾∾´<¨t} _tf (JournalEntry _rep_sep_ ((EmptyLine _and_ Lf) _mb_rep))

@@ -3,6 +3,16 @@
 *** TODO Register report
 *** TODO Filters
 *** TODO Price handling
+**** DONE Parse price statement
+CLOSED: [2023-09-03 So 19:33]
+**** DONE Infer prices from transactions
+CLOSED: [2023-09-13 Mi 18:11]
+**** TODO Convert between price bases
+***** TODO At buying price
+***** TODO At current price
+***** TODO In specified currency
+*** TODO Parse virtual postings
+*** TODO Unit testing infrastructure
 ** Ideas
 *** TODO Query language
 *** TODO Plotting of graphs
