@@ -61,9 +61,15 @@ ExtractPrices ← {
 	# amounts
 	ams ← {h‿t : ¯1×t÷h}¨(1-˜0≠i/c)⊔˘i/c
 	# build and return table
-	d ← ⍉∾⍉¨⟨1⊑˘t, (≠i/c)‿1⥊<⟨00, 00⟩, cs, ams⟩
+	d ← ⍉∾⍉¨⟨1⊑˘t, (+´i)‿1⥊<⟨00, 00⟩, cs, ams⟩
 	{y‿m‿d‿t‿cf‿ct‿am : ⟨y, m, d⟩‿t‿⟨1, 1, cf⟩‿⟨1, am, ct⟩}˘d
 }
+
+MergePrices ← {
+    ∾𝕩
+}
+
+ReversePrice ← {d‿t‿⟨fs, fa, fc⟩‿⟨ts, ta, tc⟩ : d‿t‿⟨ts, ta÷ta, tc⟩‿⟨fs, fa÷ta, fc⟩}
 
 ProcessInput ← {
     j‿k‿p :
@@ -73,6 +79,7 @@ ProcessInput ← {
 	bal ← BalanceTAs am‿k0
 	errs ← ⍉∾⍉¨j MatchFirst˜ BalancingErrors k0‿bal
 	bal ↩ RemErrorRows bal
-	prices ← ExtractPrices j‿com‿bal
+	pi ← ExtractPrices j‿com‿bal
+	prices ← ∾⟜(ReversePrice˘) MergePrices pi‿p
 	⟨com, bal, prices, errs⟩
 }
