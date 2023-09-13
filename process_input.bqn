@@ -65,10 +65,7 @@ ExtractPrices ← {
 	{y‿m‿d‿t‿cf‿ct‿am : ⟨y, m, d⟩‿t‿⟨1, 1, cf⟩‿⟨1, am, ct⟩}˘d
 }
 
-MergePrices ← {
-    ∾𝕩
-}
-
+# swap position of a/c and change base to new first a/c
 ReversePrice ← {d‿t‿⟨fs, fa, fc⟩‿⟨ts, ta, tc⟩ : d‿t‿⟨ts, ta÷ta, tc⟩‿⟨fs, fa÷ta, fc⟩}
 
 ProcessInput ← {
@@ -79,7 +76,6 @@ ProcessInput ← {
 	bal ← BalanceTAs am‿k0
 	errs ← ⍉∾⍉¨j MatchFirst˜ BalancingErrors k0‿bal
 	bal ↩ RemErrorRows bal
-	pi ← ExtractPrices j‿com‿bal
-	prices ← ∾⟜(ReversePrice˘) MergePrices pi‿p
+	prices ← ∾⟜(ReversePrice˘) p∾ExtractPrices j‿com‿bal
 	⟨com, bal, prices, errs⟩
 }
