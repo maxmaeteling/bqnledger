@@ -103,4 +103,4 @@ KeepEntries   ← {∾⊑¨1↓¨𝕩/˜(∾1↑¨𝕩)∊"e"‿"i"}
 KeepPrices    ← {⊑¨1↓¨𝕩/˜(∾1↑¨𝕩)∊⋈"p"}
 JournalMatrix ← {(>(↕≠𝕩)∾¨0⊑¨𝕩)‿(>((↕≠𝕩)/˜≠¨1⊑¨𝕩)∾¨∾1⊑¨𝕩)}
 ParseJournal  ← {JournalMatrix KeepEntries ⊑Journal 𝕩}
-ParseJournalPrices ← {j ← Journal 𝕩 ⋄ (JournalMatrix KeepEntries ⊑j)∾<>KeepPrices ⊑j}
+ParseJournalPrices ← {j ← Journal 𝕩 ⋄ (JournalMatrix KeepEntries ⊑j)∾<↑‿4⥊>KeepPrices ⊑j}

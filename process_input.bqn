@@ -62,7 +62,7 @@ ExtractPrices ← {
 	ams ← {h‿t : ¯1×t÷h}¨(1-˜0≠i/c)⊔˘i/c
 	# build and return table
 	d ← ⍉∾⍉¨⟨1⊑˘t, (+´i)‿1⥊<⟨00, 00⟩, cs, ams⟩
-	{y‿m‿d‿t‿cf‿ct‿am : ⟨y, m, d⟩‿t‿⟨1, 1, cf⟩‿⟨1, am, ct⟩}˘d
+	↑‿4⥊{y‿m‿d‿t‿cf‿ct‿am : ⟨y, m, d⟩‿t‿⟨1, 1, cf⟩‿⟨1, am, ct⟩}˘d
 }
 
 # swap position of a/c and change base to new first a/c
