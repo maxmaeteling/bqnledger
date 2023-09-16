@@ -1,6 +1,7 @@
 ⟨Journal, ParseJournal, ParseJournalPrices⟩ ← •Import "parse.bqn"
 ⟨ProcessInput⟩ ← •Import "process_input.bqn"
 ⟨ReportBal⟩ ← •Import "report_bal.bqn"
+⟨ReportReg⟩ ← •Import "report_reg.bqn"
 
 input ← •FChars "test.ledger"
 
@@ -11,4 +12,5 @@ j‿k‿p ← ParseJournalPrices input
 # fields_ta ← ⟨"index", "date", "date_cleared", "status", "ta_code", "desc"⟩
 # fields_posting ← ⟨"index", "account", "ac", "ac_price"⟩
 
-ReportBal bal
+ReportBal com‿bal‿prices
+ReportReg com‿bal‿prices

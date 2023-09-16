@@ -23,4 +23,4 @@ CalcBal ← {
 # Add total row to bal report
 BalTotals ← {t ← +´˘⍉1↓˘𝕩 ⋄ 𝕩∾t∾˜<"Total"}
 
-ReportBal ← BalTotals CalcBal
+ReportBal ← {com‿bal‿prices: BalTotals CalcBal bal}
