@@ -24,7 +24,7 @@ AddErrorRows ← {
 	# add empty posting fallback
 	em ← (1↑˘j)(¬∘∊/⊣)(e/1↑˘k)
 	# append fallback rows 
-	t ← k∾(⍉∾⍉¨⟨em,(≠em)/≍⟨err, of, ⟨⟩⟩⟩)
+	t ← k∾(∾≍⟨em,(≠em)/≍⟨err, of, ⟨⟩⟩⟩)
 	# put fallback rows to right index
 	t⊏˜⍋({𝕩≡of}¨(2⊏˘t))+2×1↑˘t
 }
@@ -44,7 +44,7 @@ MatchFirst ← {⟨𝕨,𝕩⊏˜𝕨⊏○(⊑˘)𝕩⟩}
 RemErrorRows ← {𝕩/˜{err≢𝕩}¨1⊏˘𝕩}
 
 # add inverted sum of previous postings where sum of row is 0 (= virtual overflow posting)
-BalanceTAs ← {am‿k0 : e ← 0=+´˘am ⋄ ⍉∾⍉¨⟨2↑˘k0, (--⟜»e/+`am)⌾(e⊸/)am⟩}
+BalanceTAs ← {am‿k0 : e ← 0=+´˘am ⋄ ∾≍⟨2↑˘k0, (--⟜»e/+`am)⌾(e⊸/)am⟩}
 
 ExtractPrices ← {
     j‿com‿bal :
@@ -61,7 +61,7 @@ ExtractPrices ← {
 	# amounts
 	ams ← {h‿t : ¯1×t÷h}¨(1-˜0≠i/c)⊔˘i/c
 	# build and return table
-	d ← ⍉∾⍉¨⟨1⊑˘t, (+´i)‿1⥊<⟨00, 00⟩, cs, ams⟩
+	d ← ∾≍⟨1⊑˘t, (+´i)‿1⥊<⟨00, 00⟩, cs, ams⟩
 	↑‿4⥊{y‿m‿d‿t‿cf‿ct‿am : ⟨y, m, d⟩‿t‿⟨1, 1, cf⟩‿⟨1, am, ct⟩}˘d
 }
 
