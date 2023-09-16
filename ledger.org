@@ -11,7 +11,10 @@ CLOSED: [2023-09-13 Mi 18:11]
 ***** TODO At buying price
 ***** TODO At current price
 ***** TODO In specified currency
-*** TODO Parse virtual postings
+*** Virtual postings
+**** DONE Parse virtual postings
+CLOSED: [2023-09-16 Sa 19:57]
+**** TODO Implement dual modes of interpreting virtual postings
 *** TODO Unit testing infrastructure
 ** Ideas
 *** TODO Query language
