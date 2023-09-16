@@ -84,11 +84,13 @@ PriceAmount ← {⟨⟨⟨·, t⟩, ·⟩, a⟩ : ⋄ ⟨t, a⟩} _tf (Spaces _a
 
 Comment  ← ⟨⟨"c"⟩⟩ _tf Space _mb_rep _and_ Comm
 
-Account       ← ⊑ _tf (Listify _tf ((Symb _rep) _rep_sep_ {":" String 𝕩}))
+RegularAccount ← ⊑ _tf (Listify _tf ((Symb _rep) _rep_sep_ {":" String 𝕩}))
+VirtualAccount ← {⟨⟨·, a⟩, ·⟩ : a} _tf ({"[" CC 𝕩} _and_ ({"]" NotCC 𝕩} _rep) _and_ {"]" CC 𝕩})
+Account        ← VirtualAccount _or_ RegularAccount
 
 PostingAmount ← {⟨⟨⟨⟨acc, ·⟩, ·⟩, am⟩, am0⟩ : ⋄ ⟨Trim acc, am, am0⟩} _tf (Account _and_ Space _and_ Spaces _and_ Amount _and_ (PriceAmount _mb))
 PostingCom    ← "" _tf Comm
-PostingEmpty  ← {⟨Trim 𝕩, ⟨1, 0, -1⟩, ⟨⟩⟩} _tf Rest
+PostingEmpty  ← {⟨a, ·⟩: ⟨a, ⟨1, 0, -1⟩, ⟨⟩⟩} _tf Account _and_ (Space _mb_rep)
 Posting       ← {⟨·, r⟩ : r} _tf Spaces _and_ (PostingAmount _or_ PostingCom _or_ PostingEmpty)
 Postings      ← RemEmpty _tf (Listify _tf (Posting _rep_sep_ Lf))
 
